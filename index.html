@@ -183,18 +183,6 @@
   /* ===== חגיגה ===== */
   .confetti { position: fixed; top: -20px; width: 12px; height: 18px; z-index: 30; pointer-events: none; animation: fall linear forwards; }
   @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
-  .win {
-    position: fixed; inset: 0; z-index: 25; display: grid; place-items: center; align-content: center; gap: 2vh; pointer-events: none;
-    background: rgba(255,255,255,.9);
-    backdrop-filter: blur(8px);
-    opacity: 0; visibility: hidden;
-    transition: opacity .45s ease, visibility 0s linear .45s;
-  }
-  .win.show { opacity: 1; visibility: visible; transition: opacity .35s ease; }
-  .win .t { font-size: 16vh; font-weight: 700; color: var(--red); line-height: 1; }
-  .win .s { font-size: 5vh; font-weight: 400; color: var(--ink); }
-  .win .t, .win .s { transform: scale(.6); transition: transform .6s cubic-bezier(.2,1.6,.4,1); }
-  .win.show .t, .win.show .s { transform: scale(1); }
 
   @media (max-width: 760px) {
     body { overflow: auto; }
@@ -275,7 +263,6 @@
   </div>
 
 
-  <div class="win" id="win"><div class="t">הגענו ליעד!</div><div class="s" id="winSub"></div></div>
 
 <script>
   const fmt = n => Number(n).toLocaleString("he-IL");
@@ -435,10 +422,6 @@
       document.body.appendChild(c);
       setTimeout(() => c.remove(), 6500);
     }
-    const w = document.getElementById("win");
-    document.getElementById("winSub").textContent = fmt(state.money) + " ₪ תודות השבוע";
-    w.classList.add("show");
-    setTimeout(() => w.classList.remove("show"), 3200);
   }
 
   // הפעלה
