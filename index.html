@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>סבב גביע שבועי · אלפא</title>
+<style>
+  @font-face { font-family: "Brutalist"; src: url("assets/TelAviv-BrutalistBold.ttf") format("truetype"); font-weight: 700; }
+  @font-face { font-family: "Brutalist"; src: url("assets/TelAviv-BrutalistRegular.ttf") format("truetype"); font-weight: 400; }
+  @font-face { font-family: "Brutalist"; src: url("assets/TelAviv-BrutalistLight.ttf") format("truetype"); font-weight: 300; }
+
+  :root {
+    --red: #A30101;
+    --red-dark: #7d0000;
+    --ink: #111;
+    --muted: #8a8a8a;
+    --line: #e2e2e2;
+    --card: rgba(255,255,255,.72);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Brutalist", "Assistant", Arial, sans-serif;
+    color: var(--ink);
+    background: #fff;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ===== רקע – כמו בשקף הפותח ===== */
+  .bg-grad {
+    position: fixed; inset: -40%;
+    background: linear-gradient(97deg, #d9d9d9 0%, rgba(217,217,217,0) 55%);
+    transform: rotate(-12deg);
+    pointer-events: none; z-index: 0;
+  }
+  .bg-logo {
+    position: fixed;
+    width: 85vw; aspect-ratio: 1;
+    left: 40.5vw; top: -38vh;
+    background: url("assets/alpha-bg.png") center/cover no-repeat;
+    opacity: .17;
+    pointer-events: none; z-index: 0;
+  }
+
+  .stage {
+    position: relative; z-index: 1;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto;
+    padding: 2.2vh 4vw 2vh;
+    gap: 1.6vh;
+  }
+
+  /* ===== שורה עליונה ===== */
+  .topbar { display: flex; justify-content: space-between; align-items: flex-start; }
+  .logos { display: flex; align-items: center; gap: 1.2vw; direction: ltr; }
+  .logos img.bni { height: 5.2vh; }
+  .logos img.alpha { height: 10vh; }
+  .date { font-size: clamp(16px, 2.6vh, 34px); font-weight: 300; color: #555; letter-spacing: .02em; }
+
+  /* ===== כותרת ===== */
+  .title { text-align: center; }
+  .title h1 { font-size: clamp(32px, 8vh, 110px); font-weight: 700; line-height: 1; }
+  .pill {
+    display: inline-block;
+    margin-top: 1.4vh;
+    background: var(--red);
+    color: #f2f2f2;
+    border-radius: 2.4vh;
+    padding: .9vh 4vw 1.1vh;
+    font-size: clamp(26px, 6.4vh, 90px);
+    font-weight: 700; line-height: 1.1;
+    box-shadow: 0 1.2vh 3vh rgba(163,1,1,.22);
+  }
+
+  /* ===== כרטיסים ===== */
+  .cards {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1.45fr);
+    gap: 2vw;
+    align-items: stretch;
+    min-height: 0;
+  }
+  .card {
+    background: var(--card);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--line);
+    border-radius: 2.4vh;
+    padding: 2vh 1.6vw;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: .8vh;
+    position: relative;
+    box-shadow: 0 .8vh 3vh rgba(0,0,0,.05);
+  }
+  .card .idx { position: absolute; top: 1.6vh; right: 1.4vw; font-size: 2vh; color: var(--muted); letter-spacing: .1em; font-weight: 300; }
+  .card .num {
+    font-size: clamp(48px, 15vh, 220px);
+    font-weight: 700; line-height: .9;
+    font-variant-numeric: tabular-nums;
+    transition: transform .25s ease;
+  }
+  .card .num.bump { transform: scale(1.12); }
+  .card .label { font-size: clamp(20px, 4.4vh, 60px); font-weight: 700; }
+  .card .sub { font-size: clamp(13px, 2vh, 24px); color: var(--muted); font-weight: 300; margin-top: -.6vh; }
+
+  .card.money { background: var(--red); border-color: var(--red); color: #fff; box-shadow: 0 1.2vh 4vh rgba(163,1,1,.28); }
+  .card.money .idx, .card.money .sub { color: rgba(255,255,255,.65); }
+  .card.money .num { font-size: clamp(40px, min(15vh, 7.2vw), 220px); white-space: nowrap; }
+  .card.money .num small { font-size: .45em; font-weight: 400; margin-inline-start: .15em; }
+
+  .entry { display: flex; gap: .6vw; align-items: center; margin-top: 1vh; }
+  .entry input {
+    width: 9vw; min-width: 90px;
+    font: inherit; font-size: clamp(16px, 2.6vh, 32px); font-weight: 400;
+    text-align: center;
+    padding: .7vh .6vw;
+    border: 1.5px solid #cfcfcf; border-radius: 1.2vh;
+    background: rgba(255,255,255,.9); color: var(--ink);
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  .entry input::-webkit-outer-spin-button, .entry input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .entry input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(163,1,1,.15); }
+  .money .entry input { width: 13vw; border-color: rgba(255,255,255,.5); }
+  .money .entry input:focus { border-color: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,.3); }
+  .plus {
+    font: inherit; font-size: clamp(16px, 2.6vh, 32px); font-weight: 700;
+    width: 5.4vh; height: 5.4vh; min-width: 40px; min-height: 40px;
+    border-radius: 50%; border: 1.5px solid var(--ink); background: transparent; color: var(--ink);
+    cursor: pointer; transition: background .15s, color .15s;
+  }
+  .plus:hover { background: var(--ink); color: #fff; }
+
+  /* ===== מסלול התקדמות ===== */
+  .progress { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.6vw; }
+  .progress .end { font-size: clamp(14px, 2.4vh, 30px); color: var(--muted); font-weight: 300; white-space: nowrap; }
+  .progress .end b { color: var(--ink); font-weight: 700; }
+  .track {
+    position: relative; height: 4.6vh; min-height: 26px;
+    border-radius: 99px; background: rgba(0,0,0,.06);
+    border: 1px solid var(--line);
+    overflow: visible;
+  }
+  .fill {
+    position: absolute; top: 0; bottom: 0; right: 0; width: 0%;
+    border-radius: 99px;
+    background: linear-gradient(270deg, var(--red-dark), var(--red));
+    transition: width 1s cubic-bezier(.2,.8,.2,1);
+  }
+  .marker {
+    --m: max(50px, 9vh);
+    position: absolute; top: 50%; right: 0;
+    transform: translateY(-50%);
+    width: var(--m); height: var(--m);
+    border-radius: 50%; background: #fff;
+    border: 3px solid var(--red);
+    display: grid; place-items: center;
+    font-size: clamp(14px, 2.6vh, 32px); font-weight: 700; color: var(--red);
+    box-shadow: 0 .6vh 2vh rgba(0,0,0,.15);
+    transition: right 1s cubic-bezier(.2,.8,.2,1);
+  }
+  .trophy { width: 6vh; height: 6vh; min-width: 34px; }
+
+  .target-line { text-align: center; font-size: clamp(18px, 3.4vh, 44px); font-weight: 700; }
+  .target-line span { color: var(--red); }
+
+  /* ===== כפתורי שליטה ===== */
+  .controls {
+    position: fixed; left: 1.6vw; bottom: 1.6vh; z-index: 5;
+    display: flex; gap: .5vw; direction: ltr;
+    opacity: .25; transition: opacity .2s;
+  }
+  .controls:hover { opacity: 1; }
+  .controls button {
+    font: inherit; font-size: 14px; font-weight: 400;
+    padding: 7px 14px; border-radius: 99px;
+    border: 1px solid #bbb; background: #fff; color: #333; cursor: pointer;
+  }
+  .controls button:hover { border-color: var(--red); color: var(--red); }
+
+  /* ===== חגיגה ===== */
+  .confetti { position: fixed; top: -20px; width: 12px; height: 18px; z-index: 30; pointer-events: none; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+  .win {
+    position: fixed; inset: 0; z-index: 25; display: grid; place-items: center; pointer-events: none;
+    font-size: 16vh; font-weight: 700; color: var(--red);
+    text-shadow: 0 0 40px #fff, 0 0 20px #fff;
+    opacity: 0; transform: scale(.6);
+    transition: opacity .5s, transform .6s cubic-bezier(.2,1.6,.4,1);
+  }
+  .win.show { opacity: 1; transform: scale(1); }
+
+  @media (max-width: 760px) {
+    body { overflow: auto; }
+    .stage { height: auto; min-height: 100vh; padding: 16px; }
+    .cards { grid-template-columns: 1fr; }
+    .entry input, .money .entry input { width: 140px; }
+    .bg-logo { width: 140vw; left: 20vw; top: -20vh; }
+  }
+</style>
+</head>
+<body>
+  <div class="bg-grad"></div>
+  <div class="bg-logo"></div>
+
+  <main class="stage">
+    <header class="topbar">
+      <div class="date" id="date"></div>
+      <div class="logos">
+        <img class="bni" src="assets/bni.png" alt="BNI">
+        <img class="alpha" src="assets/alpha-logo.png" alt="אלפא">
+      </div>
+    </header>
+
+    <section class="title">
+      <h1>סבב גביע שבועי</h1>
+      <div class="pill" id="teamPill">קבוצת אלפא</div>
+    </section>
+
+    <section class="cards">
+      <div class="card" data-key="referrals">
+        <div class="idx">01</div>
+        <div class="num" id="referrals">0</div>
+        <div class="label">הפניות</div>
+        <div class="entry">
+          <input type="number" inputmode="numeric" placeholder="כמות" data-for="referrals">
+          <button class="plus" data-add="referrals" title="הוספת 1">+1</button>
+        </div>
+      </div>
+
+      <div class="card" data-key="meetings">
+        <div class="idx">02</div>
+        <div class="num" id="meetings">0</div>
+        <div class="label">פגישות</div>
+        <div class="entry">
+          <input type="number" inputmode="numeric" placeholder="כמות" data-for="meetings">
+          <button class="plus" data-add="meetings" title="הוספת 1">+1</button>
+        </div>
+      </div>
+
+      <div class="card money" data-key="money">
+        <div class="idx">03</div>
+        <div class="num"><span id="money">0</span><small>₪</small></div>
+        <div class="label">תודות</div>
+        <div class="sub">כמה כסף עשינו השבוע?</div>
+        <div class="entry">
+          <input type="number" inputmode="numeric" placeholder="סכום ב־₪" data-for="money">
+        </div>
+      </div>
+    </section>
+
+    <section class="progress">
+      <div class="end">התחלה</div>
+      <div class="track">
+        <div class="fill" id="fill"></div>
+        <div class="marker" id="marker">0%</div>
+      </div>
+      <svg class="trophy" viewBox="0 0 64 64" aria-label="גביע">
+        <path fill="#A30101" d="M16 6h32v6h10v6c0 8-6 14-13.5 14.8A16 16 0 0 1 35 42v8h9v8H20v-8h9v-8a16 16 0 0 1-9.5-9.2C12 32 6 26 6 18v-6h10V6zm-4 12c0 4.4 2.8 8 6.6 8.8A16 16 0 0 1 16 18v-0zm40 0h0a16 16 0 0 1-2.6 8.8C49.2 26 52 22.4 52 18z"/>
+      </svg>
+    </section>
+
+    <div class="target-line">יעד שבועי: <span id="targetText">28,000 ₪</span></div>
+  </main>
+
+  <div class="controls">
+    <button id="undoBtn">ביטול אחרון</button>
+    <button id="resetBtn">איפוס</button>
+  </div>
+
+
+  <div class="win" id="win">הגענו ליעד!</div>
+
+<script>
+  const fmt = n => Number(n).toLocaleString("he-IL");
+  const parseNum = v => Number(String(v).replace(/[^\d.-]/g, "")) || 0;
+
+  // המדדים תמיד מתחילים מ־0, היעד השבועי קבוע
+  let state = { target: 28000, referrals: 0, meetings: 0, money: 0, celebrated: false, history: [] };
+
+  // תאריך
+  const d = new Date();
+  document.getElementById("date").textContent =
+    String(d.getDate()).padStart(2, "0") + "." + String(d.getMonth() + 1).padStart(2, "0") + "." + d.getFullYear();
+
+  // הקטנת מספר שלא נכנס בכרטיס
+  function fitNum(el) {
+    const num = el.closest(".num") || el, card = num.closest(".card");
+    num.style.fontSize = "";
+    const max = card.clientWidth * .9;
+    if (num.scrollWidth > max) {
+      const size = parseFloat(getComputedStyle(num).fontSize);
+      num.style.fontSize = Math.floor(size * max / num.scrollWidth) + "px";
+    }
+  }
+  const refit = () => ["referrals", "meetings", "money"].forEach(k => fitNum(document.getElementById(k)));
+  window.addEventListener("resize", refit);
+  if (document.fonts) document.fonts.ready.then(refit);
+
+  // ספירה מונפשת
+  function animateTo(el, to) {
+    const from = parseNum(el.textContent);
+    if (from === to) { el.textContent = fmt(to); return; }
+    const start = performance.now(), dur = 700;
+    (function step(t) {
+      const p = Math.min(1, (t - start) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(Math.round(from + (to - from) * e));
+      fitNum(el);
+      if (p < 1) requestAnimationFrame(step);
+    })(start);
+    const num = el.closest(".num") || el;
+    num.classList.remove("bump"); void num.offsetWidth; num.classList.add("bump");
+    setTimeout(() => num.classList.remove("bump"), 250);
+  }
+
+  function render(animate = true) {
+    document.getElementById("targetText").textContent = fmt(state.target) + " ₪";
+    ["referrals", "meetings", "money"].forEach(k => {
+      const el = document.getElementById(k);
+      if (animate) animateTo(el, state[k]); else { el.textContent = fmt(state[k]); fitNum(el); }
+    });
+    const pct = state.target > 0 ? Math.max(0, Math.min(100, state.money / state.target * 100)) : 0;
+    document.getElementById("fill").style.width = pct + "%";
+    const marker = document.getElementById("marker");
+    marker.style.right = "calc((100% - var(--m)) * " + (pct / 100) + ")";
+    marker.textContent = Math.round(pct) + "%";
+    if (pct >= 100 && !state.celebrated) { state.celebrated = true; celebrate(); }
+    if (pct < 100 && state.celebrated) { state.celebrated = false; }
+  }
+
+  function add(key, amount) {
+    if (!amount) return;
+    state[key] = Math.max(0, state[key] + amount);
+    state.history.push({ key, amount });
+    render();
+    if (key === "money" && amount > 0) coin(); else tick();
+  }
+
+  // הזנה – Enter מוסיף
+  document.querySelectorAll(".entry input").forEach(inp => {
+    inp.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        add(inp.dataset.for, parseNum(inp.value));
+        inp.value = "";
+      }
+    });
+  });
+  document.querySelectorAll("[data-add]").forEach(b => b.addEventListener("click", () => add(b.dataset.add, 1)));
+
+  // ביטול אחרון
+  document.getElementById("undoBtn").addEventListener("click", () => {
+    const last = state.history.pop();
+    if (!last) return;
+    state[last.key] = Math.max(0, state[last.key] - last.amount);
+    render();
+  });
+
+  // איפוס
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    if (!confirm("לאפס את כל הנתונים?")) return;
+    Object.assign(state, { referrals: 0, meetings: 0, money: 0, celebrated: false, history: [] });
+    render();
+  });
+
+
+  // צלילים (ללא קבצים חיצוניים)
+  let ac;
+  function tone(freq, t0, dur, type = "sine", vol = .18) {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, ac.currentTime + t0);
+    g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + t0 + dur);
+    o.connect(g).connect(ac.destination);
+    o.start(ac.currentTime + t0); o.stop(ac.currentTime + t0 + dur);
+  }
+  function tick() { try { tone(880, 0, .12, "triangle", .12); } catch (e) {} }
+  function coin() { try { tone(988, 0, .1, "square", .08); tone(1319, .08, .35, "square", .08); } catch (e) {} }
+  // מחיאות כפיים קצרות + צלצול רך
+  function applause() {
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      const now = ac.currentTime, len = 2.2;
+      const noise = ac.createBuffer(1, ac.sampleRate * .08, ac.sampleRate);
+      const data = noise.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 4);
+      const master = ac.createGain();
+      master.gain.setValueAtTime(.9, now);
+      master.gain.setValueAtTime(.9, now + len * .55);
+      master.gain.exponentialRampToValueAtTime(.001, now + len);
+      master.connect(ac.destination);
+      for (let i = 0; i < 140; i++) {
+        const t = now + Math.pow(Math.random(), 1.4) * len * .9;
+        const src = ac.createBufferSource(); src.buffer = noise;
+        src.playbackRate.value = .8 + Math.random() * .5;
+        const bp = ac.createBiquadFilter(); bp.type = "bandpass";
+        bp.frequency.value = 900 + Math.random() * 1600; bp.Q.value = .9;
+        const g = ac.createGain(); g.gain.value = .25 + Math.random() * .35;
+        const pan = ac.createStereoPanner ? ac.createStereoPanner() : null;
+        if (pan) { pan.pan.value = Math.random() * 1.6 - .8; src.connect(bp).connect(g).connect(pan).connect(master); }
+        else src.connect(bp).connect(g).connect(master);
+        src.start(t);
+      }
+      [784, 988, 1175].forEach((f, i) => tone(f, i * .09, .9, "sine", .07));
+    } catch (e) {}
+  }
+
+  // חגיגה בהגעה ליעד
+  function celebrate() {
+    applause();
+    const colors = ["#A30101", "#111111", "#c0c0c0", "#ffffff", "#7d0000"];
+    for (let i = 0; i < 160; i++) {
+      const c = document.createElement("div");
+      c.className = "confetti";
+      c.style.left = Math.random() * 100 + "vw";
+      c.style.background = colors[i % colors.length];
+      c.style.border = "1px solid rgba(0,0,0,.08)";
+      c.style.animationDuration = 2.5 + Math.random() * 2.5 + "s";
+      c.style.animationDelay = Math.random() * 1.2 + "s";
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 6500);
+    }
+    const w = document.getElementById("win");
+    w.classList.add("show");
+    setTimeout(() => w.classList.remove("show"), 3800);
+  }
+
+  // הפעלה
+  render(false);
+  document.querySelector(".entry input").focus();
+</script>
+</body>
+</html>
