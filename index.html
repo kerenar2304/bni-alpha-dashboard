@@ -60,7 +60,7 @@
   .date { font-size: clamp(16px, 2.6vh, 34px); font-weight: 300; color: #555; letter-spacing: .02em; }
 
   /* ===== כותרת ===== */
-  .title { text-align: center; }
+  .title { text-align: center; margin-bottom: 4.5vh; }
   .title h1 { font-size: clamp(32px, 8vh, 110px); font-weight: 700; line-height: 1; }
   .pill {
     display: inline-block;
@@ -76,6 +76,7 @@
 
   /* ===== כרטיסים ===== */
   .cards {
+    margin-bottom: 2.5vh;
     display: grid;
     grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1.45fr);
     gap: 2vw;
@@ -95,7 +96,7 @@
   }
   .card .idx { position: absolute; top: 1.6vh; right: 1.4vw; font-size: 2vh; color: var(--muted); letter-spacing: .1em; font-weight: 300; }
   .card .num {
-    font-size: clamp(48px, 15vh, 220px);
+    font-size: clamp(44px, 12.5vh, 190px);
     font-weight: 700; line-height: .9;
     font-variant-numeric: tabular-nums;
     transition: transform .25s ease;
@@ -106,7 +107,7 @@
 
   .card.money { background: var(--red); border-color: var(--red); color: #fff; box-shadow: 0 1.2vh 4vh rgba(163,1,1,.28); }
   .card.money .idx, .card.money .sub { color: rgba(255,255,255,.65); }
-  .card.money .num { font-size: clamp(40px, min(15vh, 7.2vw), 220px); white-space: nowrap; }
+  .card.money .num { font-size: clamp(40px, min(12.5vh, 7.2vw), 190px); white-space: nowrap; }
   .card.money .num small { font-size: .45em; font-weight: 400; margin-inline-start: .15em; }
 
   .entry { display: flex; gap: .6vw; align-items: center; margin-top: 1vh; }
